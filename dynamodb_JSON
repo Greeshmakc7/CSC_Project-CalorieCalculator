@@ -1,0 +1,8 @@
+{
+    "FoodId": {"S": "1"},
+    "FoodName": {"S": "Banana"},
+    "calories": {"N": "105"},
+    "protein": {"N": "1.3"},
+    "fat": {"N": "0.3"},
+    "carbs": {"N": "27"}
+}
