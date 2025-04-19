@@ -1,0 +1,111 @@
+import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
+
+const client = new DynamoDBClient({ region: "us-east-1" });
+
+export const handler = async (event) => {
+  try {
+    // Check if the request method is POST or GET
+    const method = event.httpMethod;
+
+    if (method === "GET") {
+      // Handle the GET request to fetch food details
+      const foodId = event.queryStringParameters.foodId;  // foodId from query parameters
+
+      if (!foodId) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: "FoodId is required" }),
+        };
+      }
+
+      // DynamoDB parameters to fetch food data
+      const params = {
+        TableName: "FoodData",  // Your DynamoDB table name
+        Key: {
+          FoodId: { S: foodId },  // Partition key: FoodId
+        },
+      };
+
+      const command = new GetItemCommand(params);
+      const result = await client.send(command);
+
+      if (!result.Item) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: "Food item not found" }),
+        };
+      }
+
+      // Extract food data
+      const foodData = {
+        FoodId: result.Item.FoodId.S,
+        FoodName: result.Item.FoodName.S,
+        calories: result.Item.calories.N,
+        protein: result.Item.protein.N,
+        fat: result.Item.fat.N,
+        carbs: result.Item.carbs.N,
+      };
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(foodData),
+      };
+    } else if (method === "POST") {
+      // Handle the POST request to calculate calories
+      const body = JSON.parse(event.body);  // Parse request body
+      const { foodId, quantity } = body;  // Get foodId and quantity
+
+      if (!foodId || !quantity) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: "FoodId and quantity are required" }),
+        };
+      }
+
+      // DynamoDB parameters to fetch food data
+      const params = {
+        TableName: "FoodData",  // Your DynamoDB table name
+        Key: {
+          FoodId: { S: foodId },  // Partition key: FoodId
+        },
+      };
+
+      const command = new GetItemCommand(params);
+      const result = await client.send(command);
+
+      if (!result.Item) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: "Food item not found" }),
+        };
+      }
+
+      // Extract calories per unit from DynamoDB
+      const caloriePerUnit = parseInt(result.Item.calories.N);
+
+      // Calculate total calories based on quantity
+      const totalCalories = caloriePerUnit * parseInt(quantity);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          foodId,
+          quantity,
+          totalCalories,
+        }),
+      };
+    } else {
+      // Invalid method
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ message: "Method Not Allowed" }),
+      };
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Internal Server Error" }),
+    };
+  }
+};
