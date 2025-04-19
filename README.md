@@ -1,4 +1,4 @@
-Calorie Calculation using AWS services. 
+HealthFit - Calorie Calculator a Serverless Application 
 
 For my project we’ll be using:
 
