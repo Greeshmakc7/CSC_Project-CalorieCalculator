@@ -1,4 +1,4 @@
-HealthFit - Calorie Calculator a Serverless Application 
+HealthFit – A Serverless Diet Insight Engine
 
 For my project we’ll be using:
 
@@ -6,6 +6,7 @@ Amazon S3 to host the frontend
 Amazon DynamoDB to store food data like calories, protein, fat, carbs
 AWS Lambda to interact with DynamoDB
 Amazon API Gateway (REST API) to connect everything securely
+Amazon SNS sends personalized diet tips and messages to users based on calorie levels.
 
 
 
@@ -90,12 +91,36 @@ Copy the Invoke URL (e.g.)
 
 https://abcd1234.execute-api.us-east-1.amazonaws.com/prod/calories
 
-🧩 Step 4: Frontend Hosted on S3
+Step 4: Create Lambda Function for SNS Alerts
+To send personalized health tips based on calories, we added an SNS-integrated Lambda function.
+
+
+🔨 Lambda Function Code for SNS email
+
+To enhance the functionality of the Calorie Calculator Web Application, I created a Lambda function that integrates with Amazon Simple Notification Service (SNS). This function helps send email or SMS notifications when specific conditions are met—for example, when a high-calorie food is entered.
+
+![image](https://github.com/user-attachments/assets/30435f20-ea44-44a1-b345-cbcb5892cb39)
+![image](https://github.com/user-attachments/assets/df963eb3-e8fb-413f-a9aa-7c624d53a622)
+
+
+🔐 Step 5: Attach IAM Role for SNS Lambda Function
+To allow Lambda to publish messages to SNS, we created and attached an IAM role.
+![image](https://github.com/user-attachments/assets/3cf71b4f-2c84-4496-a926-0f0f738a341f)
+
+
+✅ IAM Role Setup:
+Go to IAM → Roles → Create Role
+
+Select Lambda as the trusted entity
+
+Attach policy: AmazonSNSFullAccess
+
+🧩 Step 6: Frontend Hosted on S3
 "I created a simple HTML form + JS script and hosted it on S3. Here's the code:"
 
 visit index.html in the repository
 
-🌍 Step 5: Make Your S3 Static Website Work
+🌍 Step 7: Make Your S3 Static Website Work
 "Here’s how I made the static website live:"
 
 Go to S3 > Your Bucket
@@ -117,10 +142,20 @@ Open the S3 Website URL — it now connects to your API!
 "And that’s it! I’ve now connected my frontend hosted on S3 to a Lambda-powered backend using REST API Gateway and DynamoDB. You can type any food and quantity, and get the calories instantly.
 This architecture is fully serverless, scalable, and super cost-effective.
 
-![image](https://github.com/user-attachments/assets/66e88d1a-997b-42e6-bb17-78afc00ede47)
-![image](https://github.com/user-attachments/assets/aaef67da-86c9-43b5-ad62-a7cf011301c7)
-![image](https://github.com/user-attachments/assets/461c1e84-4b32-4828-9e26-6cb02114baf6)
-![image](https://github.com/user-attachments/assets/b88e733a-d901-4b88-92bc-f3ea8be0fbe3)
+
+
+
+![image](https://github.com/user-attachments/assets/d5c41a02-e001-4c9b-b46d-297186134461)
+![image](https://github.com/user-attachments/assets/bbef1768-0603-4435-bcbd-da4a1cac266c)
+![image](https://github.com/user-attachments/assets/3ded6c24-1d96-408e-87bb-4981bf4ff478)
+![image](https://github.com/user-attachments/assets/4672e794-2829-4a67-9178-e3a6d33a6b44)
+![image](https://github.com/user-attachments/assets/f8a7a352-ae29-4526-8192-75828e183cd7)
+![image](https://github.com/user-attachments/assets/d9b947f3-b2a5-417d-bab5-984a369aed72)
+![image](https://github.com/user-attachments/assets/c5dcad7b-ec5b-4e04-9c09-22daafa4b3cc)
+
+
+
+
 
 
 
